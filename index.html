@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1.0">
+    <title>OmniCloud X | Anime Elite Edition</title>
+    <style>
+        :root {
+            --neon: #ff007b; /* Aesthetic Pink/Red Anime vibe */
+            --pulse: #7d5fff; 
+            --bg: #0a0b10;
+            --panel: #12141d;
+            --glass: rgba(255, 255, 255, 0.05);
+        }
+
+        * { margin:0; padding:0; box-sizing:border-box; font-family: 'Inter', sans-serif; }
+        
+        /* --- ANIME BACKGROUND ANIMATION --- */
+        body { 
+            background: var(--bg); 
+            color: white; 
+            display: flex; 
+            height: 100vh; 
+            overflow: hidden;
+            background-image: radial-gradient(circle at 50% 50%, #1a1b2e 0%, #0a0b10 100%);
+        }
+
+        @keyframes animeFloat {
+            0% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+            50% { transform: translateY(-20px) rotate(5deg); opacity: 0.5; }
+            100% { transform: translateY(0px) rotate(0deg); opacity: 0.2; }
+        }
+
+        .bg-particle {
+            position: absolute; width: 100px; height: 100px; 
+            background: var(--neon); filter: blur(80px); 
+            border-radius: 50%; z-index: -1; animation: animeFloat 6s infinite ease-in-out;
+        }
+
+        /* --- SIDEBAR --- */
+        .sidebar { width: 300px; background: var(--panel); border-right: 1px solid rgba(255,0,123,0.2); display: flex; flex-direction: column; z-index: 10; }
+        .p-card { padding: 30px; text-align: center; border-bottom: 1px solid var(--glass); }
+        
+        .avatar-container { position: relative; width: 90px; height: 90px; margin: 0 auto; }
+        .avatar { 
+            width: 100%; height: 100%; border-radius: 15px; 
+            border: 2px solid var(--neon); object-fit: cover;
+            transition: 0.5s; cursor: pointer;
+        }
+        .avatar:hover { transform: scale(1.1) rotate(-3deg); box-shadow: 0 0 20px var(--neon); }
+        
+        .level-bar { width: 100%; height: 5px; background: #222; border-radius: 10px; margin-top: 10px; overflow: hidden; }
+        .level-fill { width: 65%; height: 100%; background: var(--neon); box-shadow: 0 0 10px var(--neon); }
+
+        /* --- NAV ITEMS --- */
+        .nav-item { 
+            padding: 12px 25px; cursor: pointer; transition: 0.3s; 
+            display: flex; align-items: center; gap: 15px; border-radius: 0 50px 50px 0;
+            margin: 5px 0; border-left: 3px solid transparent;
+        }
+        .nav-item:hover { background: rgba(255, 0, 123, 0.1); border-left: 3px solid var(--neon); color: var(--neon); }
+
+        /* --- MAIN AREA --- */
+        .main { flex: 1; padding: 30px; overflow-y: auto; position: relative; }
+        .anime-banner { 
+            background: linear-gradient(45deg, #ff007b, #7d5fff);
+            padding: 25px; border-radius: 20px; margin-bottom: 30px;
+            display: flex; justify-content: space-between; align-items: center;
+            overflow: hidden; position: relative;
+        }
+        .anime-banner::after { content: 'OTAKU'; position: absolute; right: -10px; top: -10px; font-size: 80px; font-weight: 900; opacity: 0.1; }
+
+        /* --- GAME GRID --- */
+        .grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(180px, 1fr)); gap: 20px; }
+        .game-card { 
+            background: #161826; border-radius: 15px; padding: 20px; text-align: center; 
+            border: 1px solid rgba(255,255,255,0.05); transition: 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+        }
+        .game-card:hover { transform: translateY(-10px) scale(1.05); border-color: var(--neon); box-shadow: 0 10px 30px rgba(255, 0, 123, 0.2); }
+        .game-card i { font-size: 35px; display: block; margin-bottom: 10px; }
+
+        /* --- SLIDE CHAT --- */
+        .chat-panel { 
+            position: fixed; right: -400px; top: 0; width: 350px; height: 100vh; 
+            background: #0f101a; border-left: 2px solid var(--neon); transition: 0.5s; z-index: 100;
+            display: flex; flex-direction: column;
+        }
+        .chat-panel.active { right: 0; }
+        .chat-head { padding: 20px; background: rgba(255,0,123,0.1); font-weight: bold; display: flex; justify-content: space-between; }
+
+        /* --- OVERLAY --- */
+        .overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.98); display: none; z-index: 1000; flex-direction: column; }
+        .btn { background: var(--neon); border: none; padding: 10px 20px; border-radius: 8px; color: white; cursor: pointer; font-weight: bold; transition: 0.3s; }
+        .btn:hover { transform: translateY(-2px); box-shadow: 0 5px 15px var(--neon); }
+    </style>
+</head>
+<body>
+
+    <div class="bg-particle" style="top: 10%; left: 10%;"></div>
+    <div class="bg-particle" style="bottom: 10%; right: 10%; background: var(--pulse);"></div>
+
+    <aside class="sidebar">
+        <div class="p-card">
+            <div class="avatar-container">
+                <img src="https://i.pinimg.com/originals/11/49/a1/1149a17400030f0f49c065f42a1f4967.jpg" class="avatar">
+            </div>
+            <h3 style="margin-top:15px; letter-spacing: 1px;">Ahmad_Kun</h3>
+            <p style="font-size: 11px; opacity: 0.6;">Level 15 | Otaku Elite</p>
+            <div class="level-bar"><div class="level-fill"></div></div>
+            <div style="margin-top: 15px;">
+                <button class="btn" style="width: 100%; font-size: 12px;" onclick="claimPoints()">REWARD: <span id="pts">750</span> XP</button>
+            </div>
+        </div>
+
+        <nav style="flex:1; padding-top: 10px;">
+            <p style="font-size: 10px; opacity: 0.4; padding: 15px 25px;">FRIENDS LIST</p>
+            <div class="nav-item" onclick="openChat('Sasuke')">⛩️ Sasuke</div>
+            <div class="nav-item" onclick="openChat('Kakashi')">⚡ Kakashi</div>
+            <div class="nav-item" onclick="openChat('Hinata')">🌸 Hinata</div>
+            
+            <p style="font-size: 10px; opacity: 0.4; padding: 25px 25px 5px;">VOICE LOBBY</p>
+            <div class="nav-item" onclick="joinVC(this)">🎤 Anime Discussion</div>
+        </nav>
+    </aside>
+
+    <main class="main">
+        <div class="anime-banner">
+            <div>
+                <h2 style="font-size: 24px;">Otaku Elite Store</h2>
+                <p style="font-size: 13px; opacity: 0.9;">No Credit Card. Just Earn XP by Playing!</p>
+            </div>
+            <button class="btn" style="background: white; color: black;" onclick="claimPoints()">GET FREE XP</button>
+        </div>
+
+        <h2 style="margin-bottom: 25px; border-left: 4px solid var(--neon); padding-left: 15px;">TOP TIER GAMES</h2>
+        
+        <div class="grid" id="gameGrid"></div>
+    </main>
+
+    <div class="chat-panel" id="chatPanel">
+        <div class="chat-head">
+            <span id="chatName">Chat</span>
+            <span onclick="openChat()" style="cursor:pointer;">✖</span>
+        </div>
+        <div id="chatContent" style="flex:1; padding:20px; overflow-y:auto; font-size:14px;">
+            <div style="opacity:0.3; text-align:center;">Begin your story...</div>
+        </div>
+        <input type="text" placeholder="Send a message..." style="padding:20px; background:#161826; border:none; color:white; outline:none; border-top:1px solid var(--neon);" onkeypress="sendMsg(event)">
+    </div>
+
+    <div class="overlay" id="overlay">
+        <div style="padding:15px; display:flex; justify-content:space-between; background:#000; border-bottom: 1px solid var(--neon);">
+            <h3 id="gTitle">Loading...</h3>
+            <button class="btn" style="background:#ff4757" onclick="closeGame()">EXIT WORLD</button>
+        </div>
+        <iframe id="gFrame" src="" style="width:100%; height:100%; border:none;"></iframe>
+    </div>
+
+    <script>
+        let xp = 750;
+        const games = [
+            { name: "Subway Surfers", icon: "🏃", url: "https://poki.com/en/g/subway-surfers" },
+            { name: "Combat Online", icon: "🔫", url: "https://poki.com/en/g/combat-online" },
+            { name: "Moto X3M", icon: "🏍️", url: "https://poki.com/en/g/moto-x3m" },
+            { name: "Stickman Hook", icon: "🪝", url: "https://poki.com/en/g/stickman-hook" },
+            { name: "Venge.io", icon: "🎯", url: "https://poki.com/en/g/venge-io" },
+            { name: "Tunnel Rush", icon: "🌪️", url: "https://poki.com/en/g/tunnel-rush" }
+        ];
+
+        function loadGames() {
+            const grid = document.getElementById("gameGrid");
+            grid.innerHTML = games.map(g => `
+                <div class="game-card" onclick="playGame('${g.name}', '${g.url}')">
+                    <i>${g.icon}</i>
+                    <h4>${g.name}</h4>
+                </div>
+            `).join('');
+        }
+
+        function playGame(name, url) {
+            document.getElementById("gTitle").innerText = name;
+            document.getElementById("gFrame").src = url;
+            document.getElementById("overlay").style.display = "flex";
+        }
+
+        function closeGame() {
+            document.getElementById("overlay").style.display = "none";
+            document.getElementById("gFrame").src = "";
+        }
+
+        function openChat(user) {
+            const panel = document.getElementById("chatPanel");
+            if(user) document.getElementById("chatName").innerText = "Summoning " + user;
+            panel.classList.toggle("active");
+        }
+
+        function sendMsg(e) {
+            if(e.key === "Enter" && e.target.value !== "") {
+                const chat = document.getElementById("chatContent");
+                chat.innerHTML += `<div style="text-align:right; margin:10px 0;"><span style="background:var(--neon); padding:8px 15px; border-radius:15px; font-weight:bold;">${e.target.value}</span></div>`;
+                e.target.value = "";
+                chat.scrollTop = chat.scrollHeight;
+            }
+        }
+
+        function claimPoints() {
+            xp += 100;
+            document.getElementById("pts").innerText = xp;
+            alert("100 XP Claimed! Keep gaming to reach Level 20!");
+        }
+
+        function joinVC(el) {
+            el.innerHTML = "🎤 Connecting Soul...";
+            setTimeout(() => {
+                el.innerHTML = "🎤 Voice Active";
+                el.style.color = var(--neon);
+            }, 800);
+        }
+
+        loadGames();
+    </script>
+</body>
+</html>
+
+
+
+
