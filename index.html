@@ -1,0 +1,240 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OMNICLOUD v43 MAX | AHMAD ELITE</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- CSS (Design) --- */
+        :root { --primary: #00ffcc; --gold: #ffd700; --bg: #050505; }
+        body { 
+            margin:0; font-family:'Orbitron',sans-serif; background: var(--bg); color:white;
+            display:flex; justify-content:center; align-items:center; min-height:100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.96), rgba(0,0,0,0.96)), url('https://wallpaperaccess.com/full/17350.jpg');
+            background-size: cover; overflow-x: hidden;
+        }
+        .container { width:95%; max-width:450px; background:rgba(10,10,10,0.95); border:2px solid var(--primary); border-radius:30px; padding:20px; box-sizing: border-box; box-shadow: 0 0 40px rgba(0, 255, 204, 0.2); }
+        
+        .sensor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .sensor-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .sensor-val { color: var(--primary); font-weight: 900; font-size: 18px; display: block; }
+        .sensor-label { font-size: 8px; color: #888; text-transform: uppercase; }
+
+        .ai-console { background: rgba(0,255,204,0.05); padding: 12px; border-radius: 15px; border: 1px solid var(--primary); margin-bottom: 15px; min-height: 40px; }
+        #ai-status { font-size: 10px; color: #00ffcc; font-weight: 700; line-height: 1.4; }
+
+        .profile-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 15px; margin-bottom: 15px; border-left: 6px solid var(--gold); border-right: 6px solid var(--primary); cursor: pointer; }
+        .rank-display { text-align:center; color:var(--gold); font-size: 22px; font-weight:900; text-transform: uppercase; margin-top:5px; text-shadow: 0 0 10px rgba(255, 215, 0, 0.5); }
+
+        #vision-container { width: 100%; border-radius: 20px; display: none; margin-bottom: 15px; border: 2px solid var(--primary); background:#000; aspect-ratio: 16/9; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+
+        .btn-multi { background: linear-gradient(90deg, #4285f4, var(--primary)); color: white; width:100%; height: 60px; font-size: 11px; border-radius: 15px; border: none; font-family: 'Orbitron'; font-weight: 900; cursor: pointer; margin-bottom: 10px; box-shadow: 0 5px 15px rgba(0, 255, 204, 0.3); }
+        .btn-talk { background: linear-gradient(45deg, #ff0055, #bc13fe); color: white; width: 100%; height: 50px; border-radius: 15px; border: none; font-family: 'Orbitron'; font-weight: 900; margin-bottom: 10px; cursor: pointer; }
+        
+        .action-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action { background: #1a1a1a; color: white; border: 1px solid #444; padding: 12px; border-radius: 12px; font-family: 'Orbitron'; font-weight: 900; font-size: 9px; cursor: pointer; transition: 0.2s; }
+        .btn-action:active { background: var(--primary); color: black; }
+
+        #edit-panel { display:none; background: #1a1a1a; padding: 15px; border-radius: 20px; border: 2px solid var(--gold); margin-bottom: 15px; }
+        input, select { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 8px; font-family: 'Orbitron'; margin-bottom: 10px; box-sizing: border-box; font-size: 12px; }
+    </style>
+</head>
+<body onload="initSystem()">
+
+<div class="container">
+    <div style="text-align:center; margin-bottom:15px;">
+        <div style="font-size: 20px; font-weight: 900; color: var(--primary);">AHMAD OMNICLOUD v43</div>
+        <div style="font-size: 8px; color: var(--gold);">SENSORS & TACTICAL AI READY</div>
+    </div>
+
+    <div class="sensor-grid">
+        <div class="sensor-box">
+            <span id="fps-val" class="sensor-val">--</span>
+            <span class="sensor-label">FPS</span>
+        </div>
+        <div class="sensor-box">
+            <span id="speed-val" class="sensor-val">--</span>
+            <span class="sensor-label">Speed (Mbps)</span>
+        </div>
+    </div>
+
+    <div class="ai-console">
+        <div id="ai-status">System Online. Ahmad bhai, vision control ya guide use karein.</div>
+    </div>
+
+    <div class="profile-card" onclick="toggleEdit()">
+        <div style="display:flex; justify-content:space-between; font-size:10px; font-weight: 700;">
+            <span>PLAYER: <span id="p-name" style="color:var(--primary)">AHMAD</span></span>
+            <span>LVL: <span id="p-lvl" style="color:var(--primary)">45</span></span>
+        </div>
+        <div id="p-rank" class="rank-display">PEAK TOP</div>
+        <div style="text-align:center; color:var(--gold); letter-spacing:5px; font-size:12px; margin-top:5px;">⭐⭐⭐⭐⭐</div>
+    </div>
+
+    <div id="edit-panel">
+        <input id="in-name" type="text" placeholder="Player Name">
+        <input id="in-lvl" type="number" placeholder="Level">
+        <select id="in-rank">
+            <option>Bronze</option><option>Silver</option><option>Gold</option>
+            <option>Platinum</option><option>Diamond</option><option>Heroic</option>
+            <option>Elite Heroic</option><option>Master</option><option>Elite Master</option>
+            <option>Grandmaster</option><option>Regular Top</option><option selected>Peak Top</option>
+        </select>
+        <button onclick="saveProfile()" style="background:var(--primary); width:100%; padding:10px; border-radius:10px; font-weight:900; border:none; cursor:pointer;">SAVE CHANGES</button>
+    </div>
+
+    <div id="vision-container"><video id="vision-window" autoplay playsinline muted></video></div>
+
+    <button class="btn-multi" id="multiBtn">🖥️ VISION CONTROL<br><span style="font-size:7px; opacity:0.8;">(1x Cam | 2x Screen | 3x Stop)</span></button>
+
+    <button class="btn-talk" onclick="startVoiceAI()">🎤 TALK TO AI (URDU/HINDI)</button>
+    
+    <div class="action-grid">
+        <button class="btn-action" onclick="tactical('fight')">FIGHT GUIDE</button>
+        <button class="btn-action" onclick="tactical('camp')">CAMPING GUIDE</button>
+        <button class="btn-action" onclick="tactical('zone')">NEXT ZONE</button>
+        <button class="btn-action" onclick="tactical('rush')">RUSH TACTIC</button>
+    </div>
+</div>
+
+<script>
+    /* --- JAVASCRIPT (The Logic) --- */
+    let clickCount = 0; 
+    let clickTimer = null; 
+    let activeStream = null;
+
+    function initSystem() { 
+        startFPS(); 
+        startSpeed(); 
+        speak("Ahmad bhai, system update ho gaya hai. Ab aap screen share bhi kar sakte hain.");
+    }
+
+    // --- SENSORS ---
+    function startFPS() {
+        let last = performance.now(); let frames = 0;
+        function loop() {
+            frames++; let now = performance.now();
+            if (now >= last + 1000) { document.getElementById('fps-val').innerText = frames; frames = 0; last = now; }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    }
+
+    function startSpeed() {
+        setInterval(() => {
+            if (navigator.connection) {
+                let speed = navigator.connection.downlink;
+                document.getElementById('speed-val').innerText = speed;
+            }
+        }, 2000);
+    }
+
+    // --- TACTICAL AI ---
+    function tactical(mode) {
+        let msg = "";
+        if(mode === 'fight') msg = "Ahmad bhai, cover se bahar mat niklo, enemy ka reload hone ka wait karo!";
+        if(mode === 'camp') msg = "Ghar ke upar raho aur landmine lagao, abhi fight mat lo.";
+        if(mode === 'zone') msg = "Next zone Peak ya Bimasakti ke paas banne wala hai.";
+        if(mode === 'rush') msg = "Full rush kar do, enemy panic ho jayega!";
+        
+        document.getElementById('ai-status').innerText = "AI: " + msg;
+        speak(msg);
+    }
+
+    // --- VISION (CAMERA & SCREEN SHARE) ---
+    document.getElementById('multiBtn').addEventListener('click', function() {
+        clickCount++; if (clickTimer) clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            if (clickCount === 1) handleVision('camera');
+            else if (clickCount === 2) handleVision('screen');
+            else if (clickCount === 3) handleVision('stop');
+            clickCount = 0;
+        }, 400);
+    });
+
+    async function handleVision(type) {
+        const v = document.getElementById('vision-window');
+        const container = document.getElementById('vision-container');
+        
+        if (type === 'stop') { 
+            if (activeStream) {
+                activeStream.getTracks().forEach(t => t.stop()); 
+                container.style.display = "none"; 
+                speak("Vision off.");
+            }
+            return; 
+        }
+
+        try {
+            if (type === 'camera') {
+                activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+                speak("Camera active.");
+            } else if (type === 'screen') {
+                // IMPORTANT: Requires Desktop Site on Mobile
+                activeStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+                speak("Screen share active.");
+            }
+            v.srcObject = activeStream; 
+            container.style.display = "block";
+        } catch (e) { 
+            alert("Ahmad bhai: \n1. Chrome use karein. \n2. Desktop Site mode on karein."); 
+        }
+    }
+
+    // --- VOICE INTERACTION ---
+    function startVoiceAI() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!SR) { speak("Ahmad bhai, aapka browser voice support nahi karta."); return; }
+        
+        const rec = new SR(); 
+        rec.lang = 'hi-IN';
+        speak("Ji Ahmad bhai, sun raha hoon...");
+        
+        rec.onresult = (e) => {
+            let cmd = e.results[0][0].transcript.toLowerCase();
+            document.getElementById('ai-status').innerText = "Ahmad: " + cmd;
+            
+            if(cmd.includes("kaise ho")) {
+                speak("Main fit hoon Ahmad bhai. Aap batayein boxing training kaisi chal rahi hai?");
+            } else if(cmd.includes("rush")) {
+                tactical('rush');
+            } else if(cmd.includes("zone")) {
+                tactical('zone');
+            } else {
+                speak("Samajh nahi aaya, dobara bolye ga.");
+            }
+        };
+        rec.start();
+    }
+
+    // --- PROFILE CONTROLS ---
+    function toggleEdit() {
+        let p = document.getElementById('edit-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function saveProfile() {
+        let n = document.getElementById('in-name').value;
+        let l = document.getElementById('in-lvl').value;
+        let r = document.getElementById('in-rank').value;
+        if(n) document.getElementById('p-name').innerText = n.toUpperCase();
+        if(l) document.getElementById('p-lvl').innerText = l;
+        if(r) document.getElementById('p-rank').innerText = r.toUpperCase();
+        toggleEdit();
+        speak("Settings saved.");
+    }
+
+    function speak(t) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(t); 
+        u.lang = 'hi-IN';
+        window.speechSynthesis.speak(u);
+    }
+</script>
+</body>
+</html>
+
+
