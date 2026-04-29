@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OMNICLOUD AI | FULL WORKING</title>
+    <style>
+        :root {
+            --primary: #00ffcc;
+            --danger: #ff0055;
+            --warning: #ffcc00;
+            --master: #bc13fe;
+            --heroic: #ff4d4d;
+            --region-gm: #ff0000;
+            --bg: #050505;
+        }
+
+        body { 
+            background-color: var(--bg); color: #fff; 
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; 
+            margin: 0; padding: 10px; overflow-x: hidden;
+            display: flex; flex-direction: column; align-items: center; 
+        }
+
+        .container {
+            width: 100%; max-width: 400px;
+            background: linear-gradient(135deg, #0a0a0a 0%, #1a1a1a 100%);
+            border: 1px solid var(--primary); border-radius: 25px; padding: 20px;
+            box-shadow: 0 0 30px rgba(0, 255, 204, 0.1); box-sizing: border-box;
+        }
+
+        /* Input Panel */
+        #input-panel {
+            background: #111; border: 1px solid var(--warning); 
+            padding: 15px; border-radius: 15px; margin-bottom: 15px; display: none;
+        }
+
+        input, select {
+            width: 100%; padding: 12px; margin: 8px 0;
+            background: #222; border: 1px solid #444; color: white; border-radius: 8px; box-sizing: border-box; font-size: 14px;
+        }
+
+        .header { text-align: center; margin-bottom: 20px; }
+        .logo { font-size: 22px; font-weight: 900; color: var(--primary); letter-spacing: 1px; text-shadow: 0 0 10px var(--primary); }
+
+        .stats-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-bottom: 20px; }
+        .card { background: rgba(255,255,255,0.03); padding: 12px; border-radius: 15px; text-align: center; border: 1px solid #333; }
+        .val { font-size: 13px; font-weight: bold; margin-top: 5px; text-transform: uppercase; }
+
+        /* Rank Colors */
+        .glow-master { color: var(--master); text-shadow: 0 0 8px var(--master); }
+        .glow-heroic { color: var(--heroic); text-shadow: 0 0 8px var(--heroic); }
+        .glow-gm { color: var(--region-gm); text-shadow: 0 0 15px var(--region-gm); animation: pulse 1.5s infinite; }
+        @keyframes pulse { 50% { opacity: 0.7; } }
+
+        .ai-guide { 
+            background: rgba(0, 255, 204, 0.05); border-left: 4px solid var(--primary); 
+            padding: 15px; border-radius: 12px; margin-bottom: 15px; min-height: 50px;
+        }
+
+        .btn-main { width: 100%; padding: 14px; border-radius: 12px; border: none; font-weight: bold; cursor: pointer; transition: 0.2s; }
+        .btn-edit { background: #222; color: var(--warning); border: 1px solid var(--warning); margin-bottom: 15px; font-size: 11px; }
+        .btn-voice { background: linear-gradient(45deg, var(--danger), var(--master)); color: white; box-shadow: 0 5px 15px rgba(255,0,85,0.3); }
+
+        .tactical-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .btn-t { background: #111; border: 1px solid #444; color: #fff; padding: 10px; border-radius: 8px; cursor: pointer; font-size: 10px; }
+        .btn-t:active { background: var(--primary); color: #000; }
+    </style>
+</head>
+<body onload="loadData()">
+
+<div class="container">
+    <div class="header">
+        <div class="logo">OMNICLOUD AI</div>
+        <button class="btn-main btn-edit" onclick="toggleEdit()">⚙️ SYSTEM CONFIGURATION</button>
+    </div>
+
+    <div id="input-panel">
+        <input type="text" id="newName" placeholder="Player Name">
+        <select id="newRank">
+            <option value="bronze">BRONZE</option>
+            <option value="silver">SILVER</option>
+            <option value="gold">GOLD</option>
+            <option value="platinum">PLATINUM</option>
+            <option value="diamond">DIAMOND</option>
+            <option value="heroic">HEROIC</option>
+            <option value="elite-heroic">ELITE HEROIC</option>
+            <option value="master">MASTER</option>
+            <option value="elite-master">ELITE MASTER</option>
+            <option value="grandmaster">GRANDMASTER</option>
+            <option value="elite-grandmaster">ELITE GRANDMASTER</option>
+            <option value="region-gm">REGION GRANDMASTER</option>
+        </select>
+        <input type="number" id="newStars" placeholder="Stars (★)">
+        <input type="number" id="newHS" placeholder="Headshot %">
+        <button class="btn-main" style="background:var(--primary); color:#000;" onclick="saveData()">SAVE & SYNC</button>
+    </div>
+
+    <div class="stats-grid">
+        <div class="card">
+            <div style="font-size: 8px; color: #888;">COMMANDER</div>
+            <div class="val" id="dispName">AHMAD</div>
+        </div>
+        <div class="card">
+            <div style="font-size: 8px; color: #888;">TIER</div>
+            <div class="val" id="dispRank">DIAMOND</div>
+            <div id="dispStars" style="color:var(--warning); font-size: 12px;">★ 0</div>
+        </div>
+    </div>
+
+    <div class="ai-guide">
+        <span style="font-size: 9px; color: var(--primary); font-weight: bold;">AI BATTLE ADVISOR:</span>
+        <div id="ai-speech" style="font-size: 12px; margin-top: 5px; font-style: italic;">Awaiting Input...</div>
+    </div>
+
+    <div class="tactical-grid">
+        <button class="btn-t" onclick="getAdvice('rush')">RUSH PLAN</button>
+        <button class="btn-t" onclick="getAdvice('camp')">CAMPING SPOT</button>
+        <button class="btn-t" onclick="getAdvice('zone')">ZONE SHIFT</button>
+        <button class="btn-t" onclick="getAdvice('kill')">KILL CHANCE</button>
+    </div>
+
+    <button class="btn-main btn-voice" onclick="startVoice()">🎤 TALK TO AI PARTNER</button>
+</div>
+
+<script>
+    function toggleEdit() {
+        const panel = document.getElementById('input-panel');
+        panel.style.display = (panel.style.display === 'block') ? 'none' : 'block';
+    }
+
+    function saveData() {
+        const n = document.getElementById('newName').value;
+        const r = document.getElementById('newRank').value;
+        const s = document.getElementById('newStars').value;
+        const h = document.getElementById('newHS').value;
+
+        if(n) localStorage.setItem('omni_n', n);
+        if(r) localStorage.setItem('omni_r', r);
+        if(s) localStorage.setItem('omni_s', s);
+        if(h) localStorage.setItem('omni_h', h);
+
+        loadData();
+        toggleEdit();
+        if(window.navigator.vibrate) window.navigator.vibrate(50);
+    }
+
+    function loadData() {
+        const name = localStorage.getItem('omni_n') || "AHMAD";
+        const rank = localStorage.getItem('omni_r') || "diamond";
+        const stars = localStorage.getItem('omni_s') || "0";
+        
+        document.getElementById('dispName').innerText = name.toUpperCase();
+        document.getElementById('dispStars').innerText = "★ " + stars;
+        
+        const rb = document.getElementById('dispRank');
+        rb.innerText = rank.replace('-', ' ').toUpperCase();
+        rb.className = "val";
+
+        if(rank.includes('heroic')) rb.classList.add('glow-heroic');
+        else if(rank.includes('master')) rb.classList.add('glow-master');
+        else if(rank.includes('grandmaster')) rb.classList.add('glow-gm');
+
+        document.getElementById('ai-speech').innerText = "System ready, Ahmad. Rank set to " + rank.toUpperCase();
+    }
+
+    function getAdvice(type) {
+        const speech = document.getElementById('ai-speech');
+        const hs = localStorage.getItem('omni_h') || "50";
+        
+        let text = "";
+        if(type === 'rush') text = "Ahmad, scan shows enemy health is low. Rush with walls from the right!";
+        else if(type === 'camp') text = "Camping recommended at the Clock Tower basement. Stay low.";
+        else if(type === 'zone') text = "Prediction: Zone shift towards Peak. Rotate safely.";
+        else if(type === 'kill') text = "With " + hs + "% headshot rate, you have an 85% chance. Take the shot!";
+        
+        speech.innerText = text;
+        speakBack(text);
+        if(window.navigator.vibrate) window.navigator.vibrate(30);
+    }
+
+    function speakBack(text) {
+        const synth = window.speechSynthesis;
+        const utter = new SpeechSynthesisUtterance(text);
+        utter.rate = 1.1;
+        synth.speak(utter);
+    }
+
+    function startVoice() {
+        const SpeechRecognition = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if (!SpeechRecognition) {
+            alert("Voice not supported in this browser. Use Chrome.");
+            return;
+        }
+        const rec = new SpeechRecognition();
+        rec.lang = 'en-US';
+        document.getElementById('ai-speech').innerText = "Listening...";
+        rec.onresult = function(e) {
+            const cmd = e.results[0][0].transcript.toLowerCase();
+            if(cmd.includes('rush')) getAdvice('rush');
+            else if(cmd.includes('camp')) getAdvice('camp');
+            else getAdvice('kill');
+        };
+        rec.start();
+    }
+</script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
