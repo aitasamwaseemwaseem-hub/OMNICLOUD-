@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="hi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>OMNICLOUD v40 SENSORS</title>
+    <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700;900&display=swap" rel="stylesheet">
+    <style>
+        :root { --primary: #00ffcc; --gold: #ffd700; --bg: #050505; }
+        body { 
+            margin:0; font-family:'Orbitron',sans-serif; background: var(--bg); color:white;
+            display:flex; justify-content:center; align-items:center; min-height:100vh;
+            background-image: linear-gradient(rgba(0,0,0,0.96), rgba(0,0,0,0.96)), url('https://wallpaperaccess.com/full/17350.jpg');
+            background-size: cover;
+        }
+        .container { width:95%; max-width:500px; background:rgba(10,10,10,0.98); border:2px solid var(--primary); border-radius:30px; padding:20px; box-sizing: border-box; box-shadow: 0 0 50px rgba(0, 255, 204, 0.3); }
+        
+        /* SENSOR GRID */
+        .sensor-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; margin-bottom: 15px; }
+        .sensor-box { background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid #333; text-align: center; }
+        .sensor-val { color: var(--primary); font-weight: 900; font-size: 18px; display: block; }
+        .sensor-label { font-size: 8px; color: #888; text-transform: uppercase; }
+
+        .profile-card { background: rgba(255,255,255,0.08); border-radius: 20px; padding: 15px; margin-bottom: 15px; border-left: 6px solid var(--gold); border-right: 6px solid var(--primary); cursor: pointer; }
+        .row { display: flex; justify-content: space-between; margin: 8px 0; font-size: 12px; font-weight: 700; }
+        .val { color: var(--primary); text-shadow: 0 0 5px var(--primary); }
+        .rank-display { text-align:center; color:var(--gold); font-size: 22px; font-weight:900; margin-top:5px; text-transform: uppercase; }
+
+        #edit-panel { display:none; background: #1a1a1a; padding: 15px; border-radius: 20px; border: 2px solid var(--gold); margin-bottom: 15px; }
+        input, select { width: 100%; padding: 10px; background: #000; border: 1px solid #444; color: white; border-radius: 8px; font-family: 'Orbitron'; margin-bottom: 10px; box-sizing: border-box; font-size: 12px; }
+
+        #vision-container { width: 100%; border-radius: 20px; display: none; margin-bottom: 15px; border: 2px solid var(--primary); background:#000; aspect-ratio: 16/9; overflow: hidden; }
+        video { width: 100%; height: 100%; object-fit: contain; }
+
+        .btn-multi { 
+            background: linear-gradient(90deg, #4285f4, var(--primary)); 
+            color: white; width:100%; height: 65px; font-size: 12px; 
+            border-radius: 15px; border: 1px solid rgba(255,255,255,0.2); font-family: 'Orbitron'; font-weight: 900;
+            cursor: pointer; box-shadow: 0 5px 20px rgba(0, 255, 204, 0.4); margin-bottom: 15px;
+        }
+        
+        .btn-talk { background: linear-gradient(45deg, #ff0055, #bc13fe); color: white; width: 100%; height: 50px; border-radius: 15px; border: none; font-family: 'Orbitron'; font-weight: 900; margin-bottom: 10px; cursor: pointer; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+        .btn-action { background: #1a1a1a; color: white; border: 1px solid #444; padding: 12px; border-radius: 12px; font-family: 'Orbitron'; font-weight: 900; font-size: 10px; cursor: pointer; }
+    </style>
+</head>
+<body onload="initSystem()">
+
+<div class="container">
+    <div style="text-align:center; margin-bottom:15px;">
+        <div style="font-size: 22px; font-weight: 900; color: var(--primary);">AHMAD ELITE v40</div>
+        <div style="font-size: 9px; color: var(--gold);">SENSORS & VISION MASTER</div>
+    </div>
+
+    <div class="sensor-grid">
+        <div class="sensor-box">
+            <span id="fps-val" class="sensor-val">--</span>
+            <span class="sensor-label">Live FPS</span>
+        </div>
+        <div class="sensor-box">
+            <span id="speed-val" class="sensor-val">--</span>
+            <span class="sensor-label">Wifi Speed (Mbps)</span>
+        </div>
+    </div>
+
+    <div class="profile-card" onclick="toggleEdit()">
+        <div class="row"><span>PLAYER:</span><span id="p-name" class="val">AHMAD</span></div>
+        <div class="row"><span>LEVEL:</span><span id="p-level" class="val">45</span></div>
+        <div id="p-rank" class="rank-display">PEAK TOP</div>
+        <div id="p-stars" style="text-align:center; color:var(--gold); letter-spacing:5px;">⭐⭐⭐⭐⭐</div>
+    </div>
+
+    <div id="edit-panel">
+        <input id="in-name" type="text" placeholder="Edit Name">
+        <input id="in-level" type="number" placeholder="Edit Level">
+        <input id="in-stars" type="text" placeholder="Edit Stars">
+        <select id="in-rank">
+            <option>Bronze</option><option>Silver</option><option>Gold</option>
+            <option>Platinum</option><option>Diamond</option><option>Heroic</option>
+            <option>Elite Heroic</option><option>Master</option><option>Elite Master</option>
+            <option>Grandmaster</option><option>Regular Top</option><option selected>Peak Top</option>
+        </select>
+        <button onclick="saveProfile()" style="background:var(--primary); color:black; width:100%; padding:10px; border-radius:8px; font-family:'Orbitron'; font-weight:900; border:none; cursor:pointer;">SAVE CHANGES</button>
+    </div>
+
+    <div id="vision-container"><video id="vision-window" autoplay playsinline></video></div>
+
+    <button class="btn-multi" id="multiBtn">🖥️ VISION CONTROL<br><span style="font-size:7px; opacity:0.8;">(1x Cam | 2x Screen | 3x Stop)</span></button>
+
+    <button class="btn-talk" onclick="startVoiceAI()">🎤 AI TALK</button>
+    
+    <div class="grid">
+        <button class="btn-action" onclick="getZone()">ZONE LOCATOR</button>
+        <button class="btn-action" onclick="fightGuide()">FIGHT GUIDE</button>
+    </div>
+</div>
+
+<script>
+    let clickCount = 0;
+    let clickTimer = null;
+    let activeStream = null;
+
+    function initSystem() { 
+        speak("Ahmad bhai, FPS aur speed sensor active hain.");
+        startFPSCounter();
+        startSpeedMonitor();
+    }
+
+    // --- FPS COUNTER ---
+    function startFPSCounter() {
+        let last = performance.now();
+        let frames = 0;
+        function loop() {
+            frames++;
+            let now = performance.now();
+            if (now >= last + 1000) {
+                document.getElementById('fps-val').innerText = frames;
+                frames = 0; last = now;
+            }
+            requestAnimationFrame(loop);
+        }
+        requestAnimationFrame(loop);
+    }
+
+    // --- WIFI SPEED MONITOR ---
+    function startSpeedMonitor() {
+        setInterval(() => {
+            if (navigator.connection) {
+                let speed = navigator.connection.downlink; // Returns speed in Mbps
+                document.getElementById('speed-val').innerText = speed;
+            } else {
+                document.getElementById('speed-val').innerText = "N/A";
+            }
+        }, 2000);
+    }
+
+    function toggleEdit() {
+        const p = document.getElementById('edit-panel');
+        p.style.display = p.style.display === 'block' ? 'none' : 'block';
+    }
+
+    function saveProfile() {
+        const n = document.getElementById('in-name').value;
+        const l = document.getElementById('in-level').value;
+        const s = document.getElementById('in-stars').value;
+        const r = document.getElementById('in-rank').value;
+        if(n) document.getElementById('p-name').innerText = n.toUpperCase();
+        if(l) document.getElementById('p-level').innerText = l;
+        if(s) document.getElementById('p-stars').innerText = s;
+        if(r) document.getElementById('p-rank').innerText = r.toUpperCase();
+        toggleEdit();
+        speak("Settings saved.");
+    }
+
+    document.getElementById('multiBtn').addEventListener('click', function() {
+        clickCount++;
+        if (clickTimer) clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => {
+            if (clickCount === 1) handleVision('camera');
+            else if (clickCount === 2) handleVision('screen');
+            else if (clickCount === 3) handleVision('stop');
+            clickCount = 0;
+        }, 400);
+    });
+
+    async function handleVision(type) {
+        const v = document.getElementById('vision-window');
+        const container = document.getElementById('vision-container');
+        if (type === 'stop') {
+            if (activeStream) {
+                activeStream.getTracks().forEach(t => t.stop());
+                container.style.display = "none";
+            }
+            return;
+        }
+        try {
+            if (type === 'camera') activeStream = await navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } });
+            else if (type === 'screen') activeStream = await navigator.mediaDevices.getDisplayMedia({ video: true });
+            v.srcObject = activeStream;
+            container.style.display = "block";
+        } catch (e) { alert("Error: Use Desktop Site."); }
+    }
+
+    function startVoiceAI() {
+        const SR = window.SpeechRecognition || window.webkitSpeechRecognition;
+        if(!SR) return;
+        const rec = new SR(); rec.lang = 'hi-IN';
+        rec.onresult = (e) => {
+            let cmd = e.results[0][0].transcript.toLowerCase();
+            if(cmd.includes("kaise ho")) speak("Fit hoon bhai!");
+            else if(cmd.includes("zone")) getZone();
+        };
+        rec.start();
+    }
+
+    function getZone() {
+        const z = ["PEAK", "FACTORY", "CLOCK TOWER"][Math.floor(Math.random() * 3)];
+        speak("Agla zone " + z);
+    }
+
+    function speak(t) {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(t); u.lang = 'hi-IN';
+        window.speechSynthesis.speak(u);
+    }
+
+    function fightGuide() { speak("Full drag headshot maaro!"); }
+</script>
+</body>
+</html>
+
