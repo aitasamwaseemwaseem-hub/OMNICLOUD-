@@ -1,0 +1,129 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Discord | Gift Claim</title>
+    <style>
+        body { margin: 0; padding: 0; font-family: 'Whitney', sans-serif; background: #36393f; color: white; overflow: hidden; }
+        
+        /* Nitro Page */
+        #nitro-ui { display: flex; flex-direction: column; align-items: center; justify-content: center; height: 100vh; text-align: center; }
+        .nitro-card { background: #2f3136; padding: 40px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.5); width: 85%; max-width: 400px; }
+        .btn-claim { background: #5865f2; color: white; padding: 12px 25px; border: none; border-radius: 3px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 20px; }
+
+        /* Terminal */
+        #terminal { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #000; color: #0f0; font-family: monospace; padding: 25px; z-index: 100; }
+        
+        /* Fake Discord */
+        #fake-dc { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: #36393f; z-index: 200; }
+        .msg-box { background: #2f3136; padding: 20px; border-radius: 5px; border-left: 6px solid #ed4245; margin: 50px; }
+        .system-user { color: #ed4245; font-weight: bold; display: block; margin-bottom: 10px; }
+
+        /* Google Alert Overlay */
+        #google-alert {
+            display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%);
+            width: 90%; max-width: 500px; background: #d13936; color: white; padding: 30px;
+            border-radius: 10px; z-index: 300; text-align: center; box-shadow: 0 0 50px rgba(0,0,0,1);
+            font-family: sans-serif;
+        }
+
+        .danger { color: #ff0000; font-weight: bold; }
+        .blink { animation: blinker 0.4s infinite; }
+        @keyframes blinker { 50% { opacity: 0; } }
+    </style>
+</head>
+<body onclick="startPrank()">
+
+<div id="nitro-ui">
+    <div class="nitro-card">
+        <img src="https://assets-global.website-files.com/6257adef93867e3d8405e670/6257d079786a347963283f3e_Discord-Logo%2BWordmark-%2BWhite.svg" width="140">
+        <h2>Nitro Gift Unlocked!</h2>
+        <p>Claim your free subscription now.</p>
+        <button class="btn-claim">Claim Nitro</button>
+    </div>
+</div>
+
+<div id="terminal"></div>
+
+<div id="fake-dc">
+    <div class="msg-box">
+        <span class="system-user">⚠️ SYSTEM ALERT</span>
+        <div id="dc-msg"></div>
+    </div>
+</div>
+
+<div id="google-alert" class="blink">
+    <h1 style="font-size: 50px; margin: 0;">⚠️</h1>
+    <h2>CRITICAL SECURITY BREACH</h2>
+    <p style="font-size: 18px;">Google has detected that all your personal information, including passwords and banking details, have been successfully hacked and exfiltrated from this device.</p>
+    <button onclick="location.href='https://google.com'" style="background:white; color:#d13936; border:none; padding:10px 20px; font-weight:bold; cursor:pointer; border-radius:5px;">LEAVE IMMEDIATELY</button>
+</div>
+
+<script>
+const nitro = document.getElementById("nitro-ui");
+const term = document.getElementById("terminal");
+const dc = document.getElementById("fake-dc");
+const dcMsg = document.getElementById("dc-msg");
+const gAlert = document.getElementById("google-alert");
+
+function addLine(txt, cls = "") {
+    let d = document.createElement("div");
+    d.className = cls;
+    d.innerText = txt;
+    term.appendChild(d);
+}
+
+function startPrank() {
+    nitro.style.display = "none";
+    term.style.display = "block";
+    if (document.documentElement.requestFullscreen) document.documentElement.requestFullscreen();
+
+    addLine("> Connecting to Discord_API...");
+    setTimeout(() => {
+        addLine("> BYPASSING FIREWALL...", "danger");
+        let s = 3;
+        let t = setInterval(() => {
+            if (s > 0) {
+                addLine(`> EXFILTRATING DATA IN: ${s}s`, "danger");
+                s--;
+            } else {
+                clearInterval(t);
+                showDiscord();
+            }
+        }, 1000);
+    }, 800);
+    document.body.onclick = null;
+}
+
+function showDiscord() {
+    term.style.display = "none";
+    dc.style.display = "block";
+    
+    // First message: Everything deleted
+    dcMsg.innerText = "CRITICAL: All system files and personal data have been deleted.";
+    
+    setTimeout(() => {
+        // Second message: Discord self-repair
+        dcMsg.innerText = "UPDATE: Discord Security has successfully repaired the system and recovered core protocols.";
+        dcMsg.style.color = "#43b581"; // Discord Success Green
+        
+        setTimeout(() => {
+            // Go back to website and show Google Alert
+            dc.style.display = "none";
+            nitro.style.display = "flex";
+            gAlert.style.display = "block";
+            if (window.navigator.vibrate) window.navigator.vibrate([500, 200, 500]);
+        }, 2000);
+    }, 2500);
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
