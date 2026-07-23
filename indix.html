@@ -1,0 +1,611 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Orange Cat - MovieBox Hindi & Anime Hub</title>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            -webkit-tap-highlight-color: transparent;
+        }
+        body {
+            background-color: #121212;
+            color: #ffffff;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            padding-bottom: 70px;
+        }
+
+        header {
+            background-color: #18181b;
+            padding: 12px 16px;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .logo {
+            font-size: 20px;
+            font-weight: bold;
+            color: #ff6600;
+        }
+        .search-bar {
+            flex: 1;
+            background-color: #27272a;
+            border-radius: 20px;
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .search-bar input {
+            background: transparent;
+            border: none;
+            color: #fff;
+            outline: none;
+            width: 100%;
+            font-size: 14px;
+        }
+
+        .nav-tabs {
+            display: flex;
+            gap: 20px;
+            padding: 10px 16px;
+            background-color: #18181b;
+            overflow-x: auto;
+            white-space: nowrap;
+            scrollbar-width: none;
+        }
+        .nav-tabs::-webkit-scrollbar { display: none; }
+        .nav-tab {
+            color: #a1a1aa;
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+        }
+        .nav-tab.active {
+            color: #ffffff;
+            border-bottom: 2px solid #ff6600;
+            padding-bottom: 4px;
+        }
+
+        .hero-banner {
+            margin: 16px;
+            height: 200px;
+            border-radius: 12px;
+            background-size: cover;
+            background-position: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 16px;
+            position: relative;
+            box-shadow: inset 0 -80px 50px -20px rgba(0,0,0,0.9);
+            background-color: #1e1e1e;
+        }
+        .hero-title {
+            font-size: 20px;
+            font-weight: bold;
+            margin-bottom: 4px;
+            color: #ffaa66;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.8);
+        }
+        .hero-info {
+            font-size: 12px;
+            color: #d4d4d8;
+            text-shadow: 0 1px 2px rgba(0,0,0,0.8);
+        }
+
+        .categories {
+            display: flex;
+            gap: 10px;
+            padding: 0 16px;
+            overflow-x: auto;
+            margin-bottom: 20px;
+            scrollbar-width: none;
+        }
+        .categories::-webkit-scrollbar { display: none; }
+        .chip {
+            background-color: #27272a;
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-size: 13px;
+            white-space: nowrap;
+            cursor: pointer;
+            color: #d4d4d8;
+        }
+        .chip.active {
+            background-color: #ff6600;
+            color: #fff;
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 16px;
+            margin-bottom: 12px;
+        }
+        .section-title {
+            font-size: 16px;
+            font-weight: bold;
+        }
+
+        .movies-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 12px;
+            padding: 0 16px;
+            margin-bottom: 24px;
+        }
+        .movie-card {
+            background-color: #1e1e1e;
+            border-radius: 8px;
+            overflow: hidden;
+            position: relative;
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+        .movie-card:hover {
+            transform: scale(1.03);
+        }
+        .movie-card img {
+            width: 100%;
+            height: 150px;
+            object-fit: cover;
+            display: block;
+        }
+        
+        .badge-container {
+            position: absolute;
+            top: 6px;
+            left: 6px;
+            right: 6px;
+            display: flex;
+            justify-content: space-between;
+            pointer-events: none;
+        }
+        .lang-badge {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #4ade80;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+        .status-badge {
+            background-color: #ef4444;
+            color: #fff;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+        .hd-badge {
+            background-color: rgba(0, 0, 0, 0.8);
+            color: #ffaa00;
+            font-size: 9px;
+            padding: 2px 6px;
+            border-radius: 4px;
+            font-weight: bold;
+        }
+
+        .movie-title {
+            font-size: 11px;
+            padding: 8px;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            color: #e4e4e7;
+        }
+
+        .status-msg {
+            grid-column: span 3;
+            text-align: center;
+            color: #a1a1aa;
+            padding: 30px;
+            font-size: 14px;
+        }
+
+        #player-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #000000;
+            z-index: 1000;
+            flex-direction: column;
+        }
+        .player-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px 16px;
+            background-color: #18181b;
+            color: #fff;
+        }
+        .player-title {
+            font-size: 15px;
+            font-weight: bold;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            max-width: 80%;
+        }
+        .close-player-btn {
+            background: none;
+            border: none;
+            color: #ff6600;
+            font-size: 18px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+        .iframe-container {
+            flex: 1;
+            width: 100%;
+            background: #000;
+        }
+        .iframe-container iframe {
+            width: 100%;
+            height: 100%;
+            border: none;
+        }
+        
+        .server-bar {
+            background-color: #18181b;
+            padding: 8px 16px;
+            display: flex;
+            gap: 10px;
+            overflow-x: auto;
+        }
+        .server-btn {
+            background-color: #27272a;
+            color: #fff;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 6px;
+            font-size: 12px;
+            cursor: pointer;
+            white-space: nowrap;
+        }
+        .server-btn.active {
+            background-color: #ff6600;
+        }
+
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background-color: #18181b;
+            display: flex;
+            justify-content: space-around;
+            padding: 10px 0;
+            border-top: 1px solid #27272a;
+            z-index: 100;
+        }
+        .nav-item {
+            text-align: center;
+            color: #a1a1aa;
+            font-size: 11px;
+            cursor: pointer;
+        }
+        .nav-item.active {
+            color: #ff6600;
+        }
+        .nav-item div:first-child {
+            font-size: 18px;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo">🐱</div>
+        <div class="search-bar">
+            <span>🔍</span>
+            <input type="text" id="search-input" placeholder="Search Hindi movies, Anime, K-Dramas..." oninput="handleSearch(this.value)">
+        </div>
+    </header>
+
+    <div class="nav-tabs">
+        <div class="nav-tab" onclick="filterTab('trending', this)">Trending</div>
+        <div class="nav-tab active" onclick="filterTab('movie', this)">Movies</div>
+        <div class="nav-tab" onclick="filterTab('tv', this)">Series & Anime</div>
+        <div class="nav-tab" onclick="filterTab('kdrama', this)">K & C-Drama</div>
+    </div>
+
+    <div class="hero-banner" id="hero-banner">
+        <div class="hero-title" id="hero-title">Orange Cat Exclusive</div>
+        <div class="hero-info" id="hero-info">Loading Featured Content...</div>
+    </div>
+
+    <div class="categories">
+        <div class="chip active" onclick="filterCategory('all', this)">All</div>
+        <div class="chip" onclick="filterCategory('hindi', this)">🇮🇳 Hindi / Bollywood</div>
+        <div class="chip" onclick="filterCategory('punjabi', this)">🌟 Punjabi</div>
+        <div class="chip" onclick="filterCategory('anime', this)">⚡ Anime</div>
+        <div class="chip" onclick="filterCategory('kdrama', this)">🇰🇷 K-Drama</div>
+        <div class="chip" onclick="filterCategory('cdrama', this)">🇨🇳 C-Drama</div>
+        <div class="chip" onclick="filterCategory('hollywood', this)">🎬 Hollywood</div>
+        <div class="chip" onclick="filterCategory('turkish', this)">🇹🇷 Turkish</div>
+    </div>
+
+    <div class="section-header">
+        <div class="section-title" id="section-heading">🔥 Popular Selections</div>
+    </div>
+
+    <div id="movies-container" class="movies-grid">
+        <div class="status-msg">Loading massive content library...</div>
+    </div>
+
+    <div id="player-modal">
+        <div class="player-header">
+            <div id="modal-title" class="player-title">Movie Title</div>
+            <button class="close-player-btn" onclick="closePlayer()">✕ Close</button>
+        </div>
+        <div class="server-bar">
+            <button class="server-btn active" onclick="changeServer(0, this)">Server 1</button>
+            <button class="server-btn" onclick="changeServer(1, this)">Server 2</button>
+            <button class="server-btn" onclick="changeServer(2, this)">Server 3</button>
+        </div>
+        <div class="iframe-container">
+            <iframe id="movie-iframe" src="" allowfullscreen allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"></iframe>
+        </div>
+    </div>
+
+    <div class="bottom-nav">
+        <div class="nav-item active">
+            <div>🏠</div>
+            <div>Home</div>
+        </div>
+        <div class="nav-item">
+            <div>⭐</div>
+            <div>Premium</div>
+        </div>
+        <div class="nav-item">
+            <div>📥</div>
+            <div>Downloads</div>
+        </div>
+        <div class="nav-item">
+            <div>👤</div>
+            <div>Me</div>
+        </div>
+    </div>
+
+    <script>
+        const API_KEY = '0132281e5ec06a71a8c507095bd70851';
+        let allItems = [];
+        let heroIndex = 0;
+        let heroInterval;
+        let currentItemData = null;
+
+        async function fetchAllData() {
+            const container = document.getElementById('movies-container');
+            try {
+                // Ek sath multiple requests bhej kar dher saara Hindi, Punjabi, Anime aur Drama data fetch kar rahe hain
+                const [res1, res2, res3, res4, res5, res6, res7] = await Promise.all([
+                    fetch(`https://api.themoviedb.org/3/trending/all/week?api_key=${API_KEY}`),
+                    fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=hi&sort_by=popularity.desc`),
+                    fetch(`https://api.themoviedb.org/3/discover/movie?api_key=${API_KEY}&with_original_language=pa&sort_by=popularity.desc`),
+                    fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_genres=16&sort_by=popularity.desc`),
+                    fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=ko&sort_by=popularity.desc`),
+                    fetch(`https://api.themoviedb.org/3/discover/tv?api_key=${API_KEY}&with_original_language=zh&sort_by=popularity.desc`),
+                    fetch(`https://api.themoviedb.org/3/movie/upcoming?api_key=${API_KEY}&region=IN`)
+                ]);
+                
+                const d1 = await res1.json();
+                const d2 = await res2.json();
+                const d3 = await res3.json();
+                const d4 = await res4.json();
+                const d5 = await res5.json();
+                const d6 = await res6.json();
+                const d7 = await res7.json();
+
+                let rawResults = [
+                    ...(d1.results || []), 
+                    ...(d2.results || []), 
+                    ...(d3.results || []),
+                    ...(d4.results || []),
+                    ...(d5.results || []),
+                    ...(d6.results || []),
+                    ...(d7.results || [])
+                ];
+
+                // Duplicate items remove karna
+                allItems = [...new Map(rawResults.map(i => [i.id + '-' + (i.media_type || (i.first_air_date ? 'tv' : 'movie')), i])).values()];
+
+                displayContent(allItems);
+                startHeroSlider(allItems);
+            } catch (error) {
+                console.error(error);
+                container.innerHTML = '<div class="status-msg">Unable to load library. Check connection.</div>';
+            }
+        }
+
+        function startHeroSlider(items) {
+            const validItems = items.filter(i => i.backdrop_path);
+            if(validItems.length === 0) return;
+
+            function updateHero() {
+                const item = validItems[heroIndex % validItems.length];
+                const banner = document.getElementById('hero-banner');
+                const title = document.getElementById('hero-title');
+                const info = document.getElementById('hero-info');
+
+                banner.style.backgroundImage = item.backdrop_path 
+                    ? `url('https://image.tmdb.org/t/p/original${item.backdrop_path}')` 
+                    : "linear-gradient(#222,#111)";
+                title.innerText = item.title || item.name || "Orange Cat Exclusive";
+                info.innerText = `${item.release_date || item.first_air_date || '2026'} • HD Streaming`;
+                heroIndex++;
+            }
+
+            updateHero();
+            if(heroInterval) clearInterval(heroInterval);
+            heroInterval = setInterval(updateHero, 4000);
+        }
+
+        function displayContent(items) {
+            const container = document.getElementById('movies-container');
+            container.innerHTML = '';
+
+            if(items.length === 0) {
+                container.innerHTML = '<div class="status-msg">No content found in this category.</div>';
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+            const today = new Date().toISOString().split('T')[0];
+
+            items.forEach(item => {
+                const title = item.title || item.name || item.original_title || 'Unknown Title';
+                const posterUrl = item.poster_path 
+                    ? `https://image.tmdb.org/t/p/w500${item.poster_path}` 
+                    : 'https://via.placeholder.com/150';
+
+                const releaseDate = item.release_date || item.first_air_date || '';
+                const isComingSoon = releaseDate && releaseDate > today;
+                const lang = (item.original_language || 'en').toUpperCase();
+
+                const card = document.createElement('div');
+                card.className = 'movie-card';
+                card.innerHTML = `
+                    <div class="badge-container">
+                        <span class="lang-badge">${lang}</span>
+                        ${isComingSoon ? '<span class="status-badge">Coming Soon</span>' : '<span class="hd-badge">HD</span>'}
+                    </div>
+                    <img loading="lazy" src="${posterUrl}" onerror="this.src='https://via.placeholder.com/150'" alt="${title}">
+                    <div class="movie-title">${title}</div>
+                `;
+
+                if (isComingSoon) {
+                    card.onclick = () => alert(`"${title}" is coming soon on ${releaseDate}!`);
+                } else {
+                    card.onclick = () => openPlayer(item);
+                }
+
+                fragment.appendChild(card);
+            });
+
+            container.appendChild(fragment);
+        }
+
+        function handleSearch(query) {
+            query = query.trim();
+            if(!query) {
+                displayContent(allItems);
+                return;
+            }
+            const filtered = allItems.filter(item => {
+                const title = (item.title || item.name || '').toLowerCase();
+                return title.includes(query.toLowerCase());
+            });
+            displayContent(filtered);
+        }
+
+        function filterCategory(category, element) {
+            document.querySelectorAll('.chip').forEach(c => c.classList.remove('active'));
+            element.classList.add('active');
+
+            let filtered = allItems;
+            let heading = "🔥 Popular Selections";
+
+            if (category === 'hindi') {
+                filtered = allItems.filter(item => item.original_language === 'hi');
+                heading = "🇮🇳 Hindi & Bollywood Hits";
+            } else if (category === 'punjabi') {
+                filtered = allItems.filter(item => item.original_language === 'pa' || (item.title && item.title.toLowerCase().includes('punjabi')));
+                heading = "🌟 Punjabi Blockbusters";
+            } else if (category === 'anime') {
+                filtered = allItems.filter(item => item.genre_ids && item.genre_ids.includes(16));
+                heading = "⚡ Anime Series & Movies";
+            } else if (category === 'kdrama') {
+                filtered = allItems.filter(item => item.original_language === 'ko');
+                heading = "🇰🇷 Korean Dramas";
+            } else if (category === 'cdrama') {
+                filtered = allItems.filter(item => item.original_language === 'zh');
+                heading = "🇨🇳 Chinese Dramas";
+            } else if (category === 'hollywood') {
+                filtered = allItems.filter(item => item.original_language === 'en');
+                heading = "🎬 Hollywood English Movies";
+            } else if (category === 'turkish') {
+                filtered = allItems.filter(item => item.original_language === 'tr');
+                heading = "🇹🇷 Turkish Dramas";
+            }
+
+            document.getElementById('section-heading').innerText = heading;
+            displayContent(filtered);
+        }
+
+        function filterTab(tab, element) {
+            document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+            element.classList.add('active');
+            
+            if(tab === 'trending') {
+                displayContent(allItems);
+            } else if(tab === 'movie') {
+                const moviesOnly = allItems.filter(i => i.media_type === 'movie' || (!i.first_air_date && i.release_date));
+                displayContent(moviesOnly.length ? moviesOnly : allItems);
+            } else if(tab === 'tv') {
+                const tvOnly = allItems.filter(i => i.media_type === 'tv' || i.first_air_date || (i.genre_ids && i.genre_ids.includes(16)));
+                displayContent(tvOnly);
+            } else if(tab === 'kdrama') {
+                const dramas = allItems.filter(i => i.original_language === 'ko' || i.original_language === 'zh');
+                displayContent(dramas);
+            }
+        }
+
+        function openPlayer(item) {
+            currentItemData = item;
+            const modal = document.getElementById('player-modal');
+            const title = item.title || item.name || "Movie";
+            document.getElementById('modal-title').innerText = title;
+
+            document.querySelectorAll('.server-btn').forEach((b, idx) => {
+                if(idx === 0) b.classList.add('active');
+                else b.classList.remove('active');
+            });
+
+            loadServerUrl(0);
+            modal.style.display = 'flex';
+        }
+
+        function changeServer(serverIndex, btnElement) {
+            document.querySelectorAll('.server-btn').forEach(b => b.classList.remove('active'));
+            if(btnElement) btnElement.classList.add('active');
+            loadServerUrl(serverIndex);
+        }
+
+        function loadServerUrl(index) {
+            if(!currentItemData) return;
+            const item = currentItemData;
+            const type = item.media_type === 'tv' || item.first_air_date ? 'tv' : 'movie';
+            
+            const servers = [
+                `https://vidsrc.me/embed/${type}?tmdb=${item.id}`,
+                `https://vidsrc.xyz/embed/${type}?tmdb=${item.id}`,
+                `https://embed.su/embed/${type}/${item.id}`
+            ];
+
+            const iframe = document.getElementById('movie-iframe');
+            iframe.src = servers[index];
+        }
+
+        function closePlayer() {
+            document.getElementById('player-modal').style.display = 'none';
+            document.getElementById('movie-iframe').src = '';
+        }
+
+        fetchAllData();
+    </script>
+</body>
+</html>
